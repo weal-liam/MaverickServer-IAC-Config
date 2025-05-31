@@ -1,0 +1,34 @@
+- name: Deploy Node.js App to EC2
+  hosts: web
+  become: true
+  tasks:
+    - name: Update apt/yum package manager
+      ansible.builtin.package:
+        name: "*"
+        state: latest
+      when: ansible_os_family in ['Debian', 'RedHat']
+
+    - name: Install Docker
+      ansible.builtin.package:
+        name: docker
+        state: present
+
+    - name: Start Docker service
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Pull Node.js Docker image
+      community.docker.docker_image:
+        name: yourdockerhubuser/your-nodejs-app
+        source: pull
+
+    - name: Run Node.js container
+      community.docker.docker_container:
+        name: nodeapp
+        image: yourdockerhubuser/your-nodejs-app
+        ports:
+          - "80:3000"
+        state: started
+        restart_policy: always
