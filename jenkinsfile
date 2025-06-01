@@ -2,6 +2,7 @@ pipeline {
   agent { label "MAVERICK_server" }
 
   environment {
+	AWS_CREDS_ID = "${env.AWS_CRENDENTIALS_ID}"
     GITHUB_CREDS = "${env.GITHUB_CREDENTIALS_ID}"
     PRIVATE_KEY_ID = "${env.PRIVATE_KEY_ID}"
     DOCKER_IMAGE = 'wealliam/maverick-reg/MAV-app:latest'
@@ -39,18 +40,15 @@ pipeline {
     stage('Terraform Init & Apply') {
   steps {
     script {
-      withCredentials([sshUserPrivateKey(credentialsId: "${PRIVATE_KEY_ID}", keyFileVariable: 'SSH_KEY_FILE', usernameVariable: 'SSH_USER')]) {
+      withCredentials([[$class: 'AmazonWebServicesCredentialsBinding',
+                  credentialsId: "${AWS_CREDS_ID}",
+                  accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+                  secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
         dir('infra/terraform') {
-          sh '''
-            echo "SSH key is located at: $SSH_KEY_FILE"
-
-            # Generate the public key from private key
-            ssh-keygen -y -f "$SSH_KEY_FILE" > maverick.pub
-
-            # Initialize and apply Terraform
-            terraform init
-            terraform apply -auto-approve -var="public_key_path=maverick.pub"
-          '''
+		  sh '''
+			terraform init
+			terraform apply -auto-approve -var="public_key_path=maverick.pub"
+			'''
         }
       }
     }
