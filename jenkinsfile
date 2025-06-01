@@ -2,7 +2,7 @@ pipeline {
   agent any
 
   environment {
-	AWS_CREDS_ID = "${env.AWS_CRENDENTIALS_ID}"
+	AWS_CREDS_ID = "${env.AWS_CREDENTIALS_ID}"
     GITHUB_CREDS = "${env.GITHUB_CREDENTIALS_ID}"
     PRIVATE_KEY_ID = "${env.PRIVATE_KEY_ID}"
     DOCKER_IMAGE = 'wealliam/maverick-reg/MAV-app:latest'
@@ -91,7 +91,7 @@ users:
     stage('Run Ansible Playbook') {
       steps {
         dir('infra/ansible') {
-          sshagent(["$SSH_KEY_ID"]) {
+          sshagent(["$PRIVATE_KEY_ID"]) {
             script {
               def output = readJSON file: '../../kube-output.json'
               def instance_ip = output.instance_public_ip.value
