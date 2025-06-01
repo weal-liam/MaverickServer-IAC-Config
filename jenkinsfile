@@ -37,20 +37,26 @@ pipeline {
     }
 
     stage('Terraform Init & Apply') {
-      steps {
-        script {
-          withCredentials([file(credentialsId: "${PRIVATE_KEY_ID}", variable: 'PUB_KEY_PATH')]) {
-            dir('infra/terraform') {
-              sh '''
-                terraform init
-                terraform apply -auto-approve -var="public_key_path=${PUB_KEY_PATH}"
-                terraform output -json > ../../kube-output.json
-              '''
-            }
-          }
+  steps {
+    script {
+      withCredentials([sshUserPrivateKey(credentialsId: "${PRIVATE_KEY_ID}", keyFileVariable: 'SSH_KEY_FILE', usernameVariable: 'SSH_USER')]) {
+        dir('infra/terraform') {
+          sh '''
+            echo "SSH key is located at: $SSH_KEY_FILE"
+
+            # Generate the public key from private key
+            ssh-keygen -y -f "$SSH_KEY_FILE" > maverick.pub
+
+            # Initialize and apply Terraform
+            terraform init
+            terraform apply -auto-approve -var="public_key_path=maverick.pub"
+          '''
         }
       }
     }
+  }
+}
+
 
     stage('Configure kubectl') {
       steps {
