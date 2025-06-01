@@ -2,6 +2,7 @@ pipeline {
   agent {label "MAVERICK_server"}
 
   environment {
+	GITHUB_CREDS = env.GITHUB_CREDENTIALS_ID
     DOCKER_IMAGE = 'wealliam/maverick-reg/MAV-app:latest'
     HOST_PORT = '80'
     CONTAINER_PORT = '10000'
@@ -11,11 +12,25 @@ pipeline {
 	
 	stage('Clone App and Infra Repos') {
       steps {
-        dir('app') {
-          git url: 'https://github.com/your-org/repo-app.git', branch: 'main'
+             dir('app') {
+          checkout([
+            $class: 'GitSCM',
+            branches: [[name: '*/main']],
+            userRemoteConfigs: [[
+              url: 'https://github.com/weal-liam/aws-hosting-project.git',
+              credentialsId: "${GITHUB_CREDS}"
+            ]]
+          ])
         }
         dir('infra') {
-          git url: 'https://github.com/your-org/repo-infra.git', branch: 'main'
+          checkout([
+            $class: 'GitSCM',
+            branches: [[name: '*/main']],
+            userRemoteConfigs: [[
+              url: 'https://github.com/weal-liam/MaverickServer-IAC-Config.git',
+              credentialsId: "${GITHUB_CREDS}"
+            ]]
+          ])
         }
       }
     }
