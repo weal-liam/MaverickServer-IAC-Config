@@ -1,5 +1,5 @@
 pipeline {
-  agent Any
+  agent any
 
   environment {
 	AWS_CREDS_ID = "${env.AWS_CRENDENTIALS_ID}"
