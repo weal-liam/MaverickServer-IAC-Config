@@ -1,18 +1,19 @@
 pipeline {
-  agent {label "MAVERICK_server"}
+  agent { label "MAVERICK_server" }
 
   environment {
-	GITHUB_CREDS = "${env.GITHUB_CREDENTIALS_ID}"
+    GITHUB_CREDS = "${env.GITHUB_CREDENTIALS_ID}"
+    PRIVATE_KEY_ID = "${env.PRIVATE_KEY_ID}"
     DOCKER_IMAGE = 'wealliam/maverick-reg/MAV-app:latest'
     HOST_PORT = '80'
     CONTAINER_PORT = '10000'
   }
 
   stages {
-	
-	stage('Clone App and Infra Repos') {
+
+    stage('Clone App and Infra Repos') {
       steps {
-             dir('app') {
+        dir('app') {
           checkout([
             $class: 'GitSCM',
             branches: [[name: '*/master']],
@@ -34,13 +35,19 @@ pipeline {
         }
       }
     }
-	
+
     stage('Terraform Init & Apply') {
       steps {
-        dir('infra/terraform') {
-          sh 'terraform init'
-          sh 'terraform apply -auto-approve'
-          sh 'terraform output -json > ../../kube-output.json'
+        script {
+          withCredentials([file(credentialsId: "${PRIVATE_KEY_ID}", variable: 'PUB_KEY_PATH')]) {
+            dir('infra/terraform') {
+              sh '''
+                terraform init
+                terraform apply -auto-approve -var="public_key_path=${PUB_KEY_PATH}"
+                terraform output -json > ../../kube-output.json
+              '''
+            }
+          }
         }
       }
     }
@@ -112,26 +119,44 @@ users:
 
     stage('Deploy to EKS') {
       steps {
-        sh'''
-        KUBECONFIG=kubeconfig.yml kubectl apply -f app/deployment.yaml
-        KUBECONFIG=kubeconfig.yml kubectl apply -f app/service.yaml
-        KUBECONFIG=kubeconfig.yml kubectl apply -f ngnix/ingress.yaml
-        KUBECONFIG=kubeconfig.yml kubectl rollout status deployment MAV-app
-        KUBECONFIG=kubeconfig.yml kubectl get pods
-             '''
+        sh '''
+          KUBECONFIG=kubeconfig.yml kubectl apply -f app/deployment.yaml
+          KUBECONFIG=kubeconfig.yml kubectl apply -f app/service.yaml
+          KUBECONFIG=kubeconfig.yml kubectl apply -f ngnix/ingress.yaml
+          KUBECONFIG=kubeconfig.yml kubectl rollout status deployment MAV-app
+          KUBECONFIG=kubeconfig.yml kubectl get pods
+        '''
       }
     }
 
     stage('Cleanup Docker') {
       steps {
         script {
-          sh 'docker container prune -f'
-          sh 'docker image prune -f'
-          sh 'docker rmi -f MAV-app:latest || true'
-          sh 'docker rmi -f wealliam/maverick-reg/MAV-app:latest || true'
+          echo "Cleaning up Docker resources..."
+          sh '''
+            docker ps -a --filter "ancestor=MAV-app:latest" -q | xargs -r docker rm -f
+            docker ps -a --filter "ancestor=wealliam/maverick-reg/MAV-app:latest" -q | xargs -r docker rm -f
+            docker rmi -f MAV-app:latest || true
+            docker rmi -f wealliam/maverick-reg/MAV-app:latest || true
+            docker container prune -f
+            docker image prune -f --filter "until=24h"
+            docker volume prune -f
+            docker network prune -f
+          '''
         }
       }
     }
+
+    stage('Cleanup Sensitive Files') {
+      steps {
+        script {
+          echo "Removing temporary files..."
+          sh 'rm -f kubeconfig.yml || true'
+          sh 'rm -f kube-output.json || true'
+        }
+      }
+    }
+
   }
 
   post {
@@ -139,7 +164,7 @@ users:
       echo "Deployment to EKS successful!"
     }
     failure {
-      echo "Pipeline failed. Check logs."
+      echo "Pipeline failed. Check logs for details."
     }
   }
 }

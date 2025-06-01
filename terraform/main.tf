@@ -4,7 +4,7 @@ resource "aws_vpc" "weal_vpc" {
   enable_dns_support   = true
 
   tags = {
-    name = "dev"
+    Name = "dev"
   }
 }
 
@@ -32,7 +32,7 @@ resource "aws_subnet" "weal_public_subnet" {
   availability_zone       = "eu-north-1a"
 
   tags = {
-    name = "dev-public"
+    Name = "dev-public"
   }
 }
 
@@ -43,7 +43,7 @@ resource "aws_subnet" "weal_public_subnet_b" {
   availability_zone       = "eu-north-1b"
 
   tags = {
-    name = "dev-public-b"
+    Name = "dev-public-b"
   }
 }
 
@@ -51,7 +51,7 @@ resource "aws_internet_gateway" "weal_igw" {
   vpc_id = aws_vpc.weal_vpc.id
 
   tags = {
-    name = "dev-igw"
+    Name = "dev-igw"
   }
 }
 resource "aws_route_table" "weal_public_route_table" {
@@ -90,13 +90,17 @@ resource "aws_security_group" "weal_sg" {
     description = "Allow all outbound traffic"
   }
   tags = {
-    name = "dev-sg"
+    Name = "dev-sg"
   }
+}
+
+variable "public_key_path" {
+  type        = string
 }
 
 resource "aws_key_pair" "maverick_key" {
   key_name   = "maverick_key"
-  public_key = file("~/.ssh/maverick_key.pub")
+  public_key = file(var.public_key_path)
 }
 
 resource "aws_instance" "maverick_server" {
@@ -111,6 +115,7 @@ resource "aws_instance" "maverick_server" {
   }
   root_block_device {
     volume_size = 10
+	encrypted = true
   }
 }
 
