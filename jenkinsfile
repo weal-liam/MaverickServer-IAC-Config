@@ -3,7 +3,7 @@ pipeline {
 
   environment {
     GITHUB_CREDS = credentials('github-credentials.id')
-    AWS_ACCESS_KEY_ID = credentials('aws-access-key')
+    AWS_ACCESS_KEY_ID = credentials('aws-access-key-id')
     AWS_SECRET_ACCESS_KEY = credentials('aws-secret-key')
     DOCKER_IMAGE = 'wealliam/maverick-reg/MAV-app:latest'
     HOST_PORT = '80'
