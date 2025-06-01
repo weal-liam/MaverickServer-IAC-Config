@@ -8,9 +8,19 @@
         state: latest
       when: ansible_os_family in ['Debian', 'RedHat']
 
+    - name: Install pip3
+      ansible.builtin.apt:
+        name: python3-pip
+        state: present
+      when: ansible_os_family == 'Debian'
+
+    - name: Install docker SDK for Python
+      ansible.builtin.pip:
+        name: docker
+
     - name: Install Docker
       ansible.builtin.package:
-        name: docker
+        name: docker.io
         state: present
 
     - name: Start Docker service
@@ -18,17 +28,18 @@
         name: docker
         state: started
         enabled: true
+      when: "'docker.io' in ansible_facts.packages or 'docker' in ansible_facts.packages"
 
     - name: Pull Node.js Docker image
       community.docker.docker_image:
-        name: yourdockerhubuser/your-nodejs-app
+        name: "{{ docker_image }}"
         source: pull
 
     - name: Run Node.js container
       community.docker.docker_container:
         name: nodeapp
-        image: yourdockerhubuser/your-nodejs-app
+        image: "{{ docker_image }}"
         ports:
-          - "80:3000"
+          - "{{ host_port }}:{{container_port}}"
         state: started
         restart_policy: always
