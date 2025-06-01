@@ -8,16 +8,6 @@ pipeline {
   }
 
   stages {
-    stage('Clone App and Infra Repos') {
-      steps {
-        dir('app') {
-          git url: 'https://github.com/weal-liam/aws-hosting-project.git', branch: 'main'
-        }
-        dir('infra') {
-          git url: 'https://github.com/weal-liam/MaverickServer-IAC-Config.git', branch: 'main'
-        }
-      }
-    }
 
     stage('Terraform Init & Apply') {
       steps {
