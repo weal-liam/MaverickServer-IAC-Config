@@ -2,7 +2,7 @@ pipeline {
   agent {label "MAVERICK_server"}
 
   environment {
-	GITHUB_CREDS = env.GITHUB_CREDENTIALS_ID
+	GITHUB_CREDS = "${env.GITHUB_CREDENTIALS_ID}"
     DOCKER_IMAGE = 'wealliam/maverick-reg/MAV-app:latest'
     HOST_PORT = '80'
     CONTAINER_PORT = '10000'
