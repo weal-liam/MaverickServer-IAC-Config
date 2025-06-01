@@ -2,7 +2,7 @@ pipeline {
   agent {label "MAVERICK_server"}
 
   environment {
-    GITHUB_CREDS = credentials('github-credentials.id')
+    //GITHUB_CREDS = credentials('github-credentials.id')
     //AWS_ACCESS_KEY_ID = credentials('aws-access-key.id')
    // AWS_SECRET_ACCESS_KEY = credentials('aws-secret-key.id')
     DOCKER_IMAGE = 'wealliam/maverick-reg/MAV-app:latest'
@@ -14,10 +14,10 @@ pipeline {
     stage('Clone App and Infra Repos') {
       steps {
         dir('app') {
-          git url: 'https://github.com/weal-liam/aws-hosting-project.git', branch: 'main', credentialsId: "${env.GITHUB_CREDS}"
+          git url: 'https://github.com/weal-liam/aws-hosting-project.git', branch: 'main'"
         }
         dir('infra') {
-          git url: 'https://github.com/weal-liam/MaverickServer-IAC-Config.git', branch: 'main', credentialsId: "${env.GITHUB_CREDS}"
+          git url: 'https://github.com/weal-liam/MaverickServer-IAC-Config.git', branch: 'main'"
         }
       }
     }
