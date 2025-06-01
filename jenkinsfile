@@ -8,7 +8,18 @@ pipeline {
   }
 
   stages {
-
+	
+	stage('Clone App and Infra Repos') {
+      steps {
+        dir('app') {
+          git url: 'https://github.com/your-org/repo-app.git', branch: 'main'
+        }
+        dir('infra') {
+          git url: 'https://github.com/your-org/repo-infra.git', branch: 'main'
+        }
+      }
+    }
+	
     stage('Terraform Init & Apply') {
       steps {
         dir('infra/terraform') {
