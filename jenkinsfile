@@ -94,7 +94,7 @@ clusters:
 - cluster:
     server: ${ec2_endpoint}
     certificate-authority-data: ${cert}
-  name: custom-eks
+  name: weal_eks_cluster
 contexts:
 - context:
     cluster: weal_eks_cluster
@@ -163,9 +163,16 @@ ${instance_ip} ansible_user=ubuntu
     stage('Deploy to EKS') {
       steps {
         sh '''
-          KUBECONFIG=kubeconfig.yml kubectl apply -f app/app/deployment.yaml
-          KUBECONFIG=kubeconfig.yml kubectl apply -f app/app/service.yaml
-          KUBECONFIG=kubeconfig.yml kubectl apply -f app/ngnix/ingress.yaml
+          set -e
+          KUBECONFIG=kubeconfig.yml kubectl apply -f app/app/deployment.yaml || \
+          KUBECONFIG=kubeconfig.yml kubectl apply -f app/app/deployment.yaml --validate=false
+
+          KUBECONFIG=kubeconfig.yml kubectl apply -f app/app/service.yaml || \
+          KUBECONFIG=kubeconfig.yml kubectl apply -f app/app/service.yaml --validate=false
+
+          KUBECONFIG=kubeconfig.yml kubectl apply -f app/ngnix/ingress.yaml || \
+          KUBECONFIG=kubeconfig.yml kubectl apply -f app/ngnix/ingress.yaml --validate=false
+
           KUBECONFIG=kubeconfig.yml kubectl rollout status deployment mav-app
           KUBECONFIG=kubeconfig.yml kubectl get pods
         '''
