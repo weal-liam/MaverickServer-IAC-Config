@@ -92,7 +92,7 @@ ${instance_ip} ansible_user=ubuntu
 apiVersion: v1
 clusters:
 - cluster:
-    server: https://${ec2_endpoint}
+    server: ${ec2_endpoint}
     certificate-authority-data: ${cert}
   name: custom-eks
 contexts:
