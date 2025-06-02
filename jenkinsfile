@@ -106,7 +106,7 @@ users:
           sh '''
             echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
             docker tag mav-app:latest wealliam/maverick-reg/mav-app:latest
-            docker push wealliam/maverick-reg:mav-app:latest
+            docker push wealliam/maverick-reg/mav-app:latest
           '''
         }
       }
