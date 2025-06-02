@@ -92,6 +92,26 @@ users:
       }
     }
 
+    stage('Build Docker Image') {
+      steps {
+        dir('app') {
+          sh 'docker build -t MAV-app:latest .'
+        }
+      }
+    }
+
+    stage('Push to Docker Desktop') {
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+          sh '''
+            echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+            docker tag MAV-app:latest wealliam/maverick-reg/MAV-app:latest
+            docker push wealliam/maverick-reg/MAV-app:latest
+          '''
+        }
+      }
+    }
+
     stage('Run Ansible Playbook') {
       steps {
         dir('infra/ansible') {
@@ -109,26 +129,6 @@ ${instance_ip} ansible_user=ubuntu
               sh 'ansible-playbook -i inventory.ini playbook.yml --extra-vars "docker_image=${DOCKER_IMAGE} host_port=${HOST_PORT} container_port=${CONTAINER_PORT}"'
             }
           }
-        }
-      }
-    }
-
-    stage('Build Docker Image') {
-      steps {
-        dir('app') {
-          sh 'docker build -t MAV-app:latest .'
-        }
-      }
-    }
-
-    stage('Push to Docker Desktop') {
-      steps {
-        withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-          sh '''
-            echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
-            docker tag MAV-app:latest wealliam/maverick-reg/MAV-app:latest
-            docker push wealliam/maverick-reg/MAV-app:latest
-          '''
         }
       }
     }
