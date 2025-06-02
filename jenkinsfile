@@ -99,7 +99,14 @@ users:
             script {
               def output = readJSON file: '../../kube-output.json'
               def instance_ip = output.maverick_server_public_ip.value
-              sh 'ansible-playbook -i inventory.ini playbook.yml --extra-vars "docker_image=${DOCKER_IMAGE} host_port=${HOST_PORT} container_port=${CONTAINER_PORT} instance_ip=${instance_ip}"'
+
+              // Dynamically create inventory.ini with the actual IP
+              writeFile file: 'inventory.ini', text: """
+[web]
+${instance_ip} ansible_user=ubuntu
+"""
+
+              sh 'ansible-playbook -i inventory.ini playbook.yml --extra-vars "docker_image=${DOCKER_IMAGE} host_port=${HOST_PORT} container_port=${CONTAINER_PORT}"'
             }
           }
         }
