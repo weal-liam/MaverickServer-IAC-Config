@@ -59,6 +59,26 @@ pipeline {
     }
   }
 }
+    
+        stage('Provision Tools on EC2') {
+          steps {
+            dir('infra/ansible') {
+              sshagent(["$PRIVATE_KEY_ID"]) {
+                script {
+                  def output = readJSON file: '../../kube-output.json'
+                  def instance_ip = output.maverick_server_public_ip.value
+    
+                  // Dynamically create inventory.ini with the actual IP
+                  writeFile file: 'inventory.ini', text: """
+[web]
+${instance_ip} ansible_user=ubuntu
+"""
+                  sh 'ansible-playbook -i inventory.ini playbook_initial.yml'
+                }
+              }
+            }
+          }
+        }
 
     stage('Configure kubectl') {
       steps {
