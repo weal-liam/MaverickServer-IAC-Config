@@ -15,5 +15,5 @@ output "cluster_token" {
 }
 
 output "alb_dns_name" {
-  value = aws_lb.weal_alb.dns_name
+  value = aws_lb.weal_lb.dns_name
 }
