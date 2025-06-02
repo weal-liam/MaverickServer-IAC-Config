@@ -112,7 +112,7 @@ resource "aws_instance" "maverick_server" {
     Name = "MaverickServer"
   }
   root_block_device {
-    volume_size = 10
+    volume_size = 20
 	encrypted = true
   }
 }
