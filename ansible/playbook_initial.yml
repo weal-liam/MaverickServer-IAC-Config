@@ -17,8 +17,9 @@
       when: ansible_os_family == 'Debian'
 
     - name: Install Ansible (Debian/Ubuntu)
-      ansible.builtin.pip:
+      ansible.builtin.apt:
         name: ansible
+        state: present
       when: ansible_os_family == 'Debian'
 
     - name: Download kubectl (Debian/Ubuntu)
