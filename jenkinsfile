@@ -173,6 +173,9 @@ ${instance_ip} ansible_user=ubuntu
           KUBECONFIG=kubeconfig.yml kubectl apply -f app/ngnix/ingress.yaml || \
           KUBECONFIG=kubeconfig.yml kubectl apply -f app/ngnix/ingress.yaml --validate=false
           KUBECONFIG=kubeconfig.yml kubectl get pods
+          KUBECONFIG=kubeconfig.yml kubectl get ns
+          KUBECONFIG=kubeconfig.yml kubectl get svc -o wide
+          KUBECONFIG=kubeconfig.yml kubectl get svc -n node-ingress
         '''
       }
     }
