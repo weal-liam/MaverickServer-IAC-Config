@@ -113,8 +113,9 @@ users:
 
     stage('Push to Docker Desktop') {
       steps {
-        script {
+        withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
           sh '''
+            echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
             docker tag MAV-app:latest wealliam/maverick-reg/MAV-app:latest
             docker push wealliam/maverick-reg/MAV-app:latest
           '''
