@@ -176,7 +176,7 @@ ${instance_ip} ansible_user=ubuntu
           KUBECONFIG=kubeconfig.yml kubectl get pods -o wide
           KUBECONFIG=kubeconfig.yml kubectl get ns
           KUBECONFIG=kubeconfig.yml kubectl get svc -o wide
-          KUBECONFIG=kubeconfig.yml kubectl get svc -n node-ingress
+          KUBECONFIG=kubeconfig.yml kubectl describe pod maverick-code-65c4c6f4f8-gxvmr
         '''
       }
     }
