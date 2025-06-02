@@ -5,7 +5,7 @@ pipeline {
 	AWS_CREDS_ID = "${env.AWS_CREDENTIALS_ID}"
     GITHUB_CREDS = "${env.GITHUB_CREDENTIALS_ID}"
     PRIVATE_KEY_ID = "${env.PRIVATE_KEY_ID}"
-    DOCKER_IMAGE = 'wealliam/maverick-reg/mav-app:latest'
+    DOCKER_IMAGE = 'wealliam/maverick-reg'
     HOST_PORT = '80'
     CONTAINER_PORT = '10000'
   }
@@ -105,8 +105,8 @@ users:
         withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
           sh '''
             echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
-            docker tag mav-app:latest wealliam/maverick-reg/mav-app:latest
-            docker push wealliam/maverick-reg/mav-app:latest
+            docker tag mav-app:latest wealliam/maverick-reg
+            docker push wealliam/maverick-reg
           '''
         }
       }
@@ -139,7 +139,7 @@ ${instance_ip} ansible_user=ubuntu
           KUBECONFIG=kubeconfig.yml kubectl apply -f app/deployment.yaml
           KUBECONFIG=kubeconfig.yml kubectl apply -f app/service.yaml
           KUBECONFIG=kubeconfig.yml kubectl apply -f ngnix/ingress.yaml
-          KUBECONFIG=kubeconfig.yml kubectl rollout status deployment MAV-app
+          KUBECONFIG=kubeconfig.yml kubectl rollout status deployment mav-app
           KUBECONFIG=kubeconfig.yml kubectl get pods
         '''
       }
@@ -151,9 +151,9 @@ ${instance_ip} ansible_user=ubuntu
           echo "Cleaning up Docker resources..."
           sh '''
             docker ps -a --filter "ancestor=mav-app:latest" -q | xargs -r docker rm -f
-            docker ps -a --filter "ancestor=wealliam/maverick-reg/mav-app:latest" -q | xargs -r docker rm -f
+            docker ps -a --filter "ancestor=wealliam/maverick-reg" -q | xargs -r docker rm -f
             docker rmi -f mav-app:latest || true
-            docker rmi -f wealliam/maverick-reg/mav-app:latest || true
+            docker rmi -f wealliam/maverick-reg || true
             docker container prune -f
             docker image prune -f --filter "until=24h"
             docker volume prune -f
