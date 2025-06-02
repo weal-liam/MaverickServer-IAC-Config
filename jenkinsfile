@@ -98,7 +98,7 @@ users:
           sshagent(["$PRIVATE_KEY_ID"]) {
             script {
               def output = readJSON file: '../../kube-output.json'
-              def instance_ip = output.instance_public_ip.value
+              def instance_ip = output.maverick_server_public_ip.value
               sh 'ansible-playbook -i inventory.ini playbook.yml --extra-vars "docker_image=${DOCKER_IMAGE} host_port=${HOST_PORT} container_port=${CONTAINER_PORT} instance_ip=${instance_ip}"'
             }
           }
