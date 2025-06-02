@@ -13,3 +13,7 @@ output "cluster_CA" {
 output "cluster_token" {
     value = aws_eks_cluster.weal_eks_cluster.identity[0].oidc[0].issuer
 }
+
+output "alb_dns_name" {
+  value = aws_lb.weal_alb.dns_name
+}

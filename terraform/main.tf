@@ -94,6 +94,58 @@ resource "aws_security_group" "weal_sg" {
   }
 }
 
+resource "aws_lb" "weal_lb" {
+  name               = "weal-lb"
+  internal           = false
+  load_balancer_type = "application"
+  security_groups    = [aws_security_group.weal_sg.id]
+  subnets            = [aws_subnet.weal_public_subnet.id, aws_subnet.weal_public_subnet_b.id]
+
+  enable_deletion_protection = false
+
+  tags = {
+    Name = "weal-lb"
+  }
+}
+
+resource "aws_lb_target_group" "weal_target_group" {
+  name     = "weal-target-group"
+  port     = 10000
+  protocol = "HTTP"
+  vpc_id   = aws_vpc.weal_vpc.id
+
+  health_check {
+    path                = "/"
+    protocol            = "HTTP"
+    matcher            = "200-299"
+    interval            = 30
+    timeout             = 5
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+  }
+
+  tags = {
+    Name = "weal-target-group"
+  }
+  
+}
+
+resource "aws_lb_target_group_attachment" "weal_target_group_attachment" {
+  target_group_arn = aws_lb_target_group.weal_target_group.arn
+  target_id        = aws_instance.maverick_server.id
+  port             = 10000
+}
+
+resource "aws_lb_listener" "weal_listener" {
+  load_balancer_arn = aws_lb.weal_lb.arn
+  port              = 10000
+  protocol          = "HTTP"
+
+  default_action {
+    type = "forward"
+    target_group_arn = aws_lb_target_group.weal_target_group.arn
+  }
+}
 
 resource "aws_key_pair" "maverick_key" {
   key_name   = "maverick_key"
