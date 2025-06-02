@@ -37,24 +37,25 @@ pipeline {
       }
     }
 
-    stage('Terraform Init & Apply') {
+  stage('Terraform Init & Apply') {
   steps {
     script {
-      withCredentials([[$class: 'AmazonWebServicesCredentialsBinding',
-                  credentialsId: "${AWS_CREDS_ID}",
-                  accessKeyVariable: 'AWS_ACCESS_KEY_ID',
-                  secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'],file(credentialsId: "$PRIVATE_KEY_ID", variable: 'PUB_KEY_PATH')]) {
-        dir('infra/terraform') {
-		  sh '''
-			terraform init
-			terraform apply -auto-approve -var="public_key_path="$PUB_KEY_PATH"
-			'''
-        }
+      withCredentials([
+        [$class: 'AmazonWebServicesCredentialsBinding',
+          credentialsId: "${AWS_CREDS_ID}",
+          accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+          secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']
+      ]) {
+          dir('infra/terraform') {
+            sh '''
+              terraform init
+              terraform apply -auto-approve
+            '''
+          }
       }
     }
   }
 }
-
 
     stage('Configure kubectl') {
       steps {

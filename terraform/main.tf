@@ -94,15 +94,6 @@ resource "aws_security_group" "weal_sg" {
   }
 }
 
-variable "public_key_path" {
-  type        = string
-}
-
-resource "aws_key_pair" "maverick_key" {
-  key_name   = "maverick_key"
-  public_key = file(var.public_key_path)
-}
-
 resource "aws_instance" "maverick_server" {
   ami           = data.aws_ami.maverick_server_ami.id
   instance_type = "t3.micro"
