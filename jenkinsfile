@@ -51,6 +51,8 @@ pipeline {
               terraform init
               terraform apply -auto-approve
               terraform output -json > ../../kube-output.json
+              ls -l ../../kube-output.json || true
+              cat ../../kube-output.json || true
             '''
           }
       }
