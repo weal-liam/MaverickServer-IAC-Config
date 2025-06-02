@@ -94,10 +94,10 @@ clusters:
 - cluster:
     server: ${ec2_endpoint}
     certificate-authority-data: ${cert}
-  name: weal_eks_cluster
+  name: weal-eks-cluster
 contexts:
 - context:
-    cluster: weal_eks_cluster
+    cluster: weal-eks-cluster
     user: admin
   name: custom-context
 current-context: custom-context
@@ -113,7 +113,7 @@ users:
         - "eks"
         - "get-token"
         - "--cluster-name"
-        - "weal_eks_cluster"
+        - "weal-eks-cluster"
 """
         }
       }
