@@ -97,7 +97,7 @@ clusters:
   name: custom-eks
 contexts:
 - context:
-    cluster: custom-eks
+    cluster: weal_eks_cluster
     user: admin
   name: custom-context
 current-context: custom-context
@@ -106,7 +106,14 @@ preferences: {}
 users:
 - name: admin
   user:
-    token: ${token}
+    exec:
+      apiVersion: "client.authentication.k8s.io/v1beta1"
+      command: "aws"
+      args:
+        - "eks"
+        - "get-token"
+        - "--cluster-name"
+        - "weal_eks_cluster"
 """
         }
       }
