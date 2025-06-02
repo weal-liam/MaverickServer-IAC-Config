@@ -24,7 +24,7 @@
 
     - name: Download kubectl (Debian/Ubuntu)
       ansible.builtin.get_url:
-        url: https://s3.us-west-2.amazonaws.com/amazon-eks/1.30.0/2024-05-09/bin/linux/amd64/kubectl
+        url: https://s3.us-west-2.amazonaws.com/amazon-eks/1.33.0/2025-05-01/bin/linux/amd64/kubectl
         dest: /usr/local/bin/kubectl
         mode: '0755'
       when: ansible_os_family == 'Debian'
