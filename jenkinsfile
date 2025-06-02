@@ -156,9 +156,9 @@ ${instance_ip} ansible_user=ubuntu
     stage('Deploy to EKS') {
       steps {
         sh '''
-          KUBECONFIG=kubeconfig.yml kubectl apply -f app/deployment.yaml
-          KUBECONFIG=kubeconfig.yml kubectl apply -f app/service.yaml
-          KUBECONFIG=kubeconfig.yml kubectl apply -f ngnix/ingress.yaml
+          KUBECONFIG=kubeconfig.yml kubectl apply -f app/app/deployment.yaml
+          KUBECONFIG=kubeconfig.yml kubectl apply -f app/app/service.yaml
+          KUBECONFIG=kubeconfig.yml kubectl apply -f app/ngnix/ingress.yaml
           KUBECONFIG=kubeconfig.yml kubectl rollout status deployment mav-app
           KUBECONFIG=kubeconfig.yml kubectl get pods
         '''
