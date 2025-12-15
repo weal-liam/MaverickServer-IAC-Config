@@ -28,14 +28,18 @@
         dest: /usr/local/bin/kubectl
         mode: '0755'
       when: ansible_os_family == 'Debian'
+      args:
+        creates: /usr/local/bin/kubectl
+
 
     - name: Download Terraform (Debian/Ubuntu)
       ansible.builtin.unarchive:
         src: https://releases.hashicorp.com/terraform/1.8.4/terraform_1.8.4_linux_amd64.zip
         dest: /usr/local/bin/
         remote_src: yes
-        extra_opts: [ '-j' ]
       when: ansible_os_family == 'Debian'
+      args:
+        creates: /usr/local/bin/terraform
 
     - name: Ensure terraform is executable
       ansible.builtin.file:
@@ -56,6 +60,7 @@
     - name: Install Ansible (Amazon Linux)
       ansible.builtin.pip:
         name: ansible
+        state: present
       when: ansible_os_family == 'RedHat'
 
     - name: Download kubectl (Amazon Linux)
@@ -64,14 +69,17 @@
         dest: /usr/local/bin/kubectl
         mode: '0755'
       when: ansible_os_family == 'RedHat'
+      args:
+        creates: /usr/local/bin/kubectl
 
     - name: Download Terraform (Amazon Linux)
       ansible.builtin.unarchive:
         src: https://releases.hashicorp.com/terraform/1.8.4/terraform_1.8.4_linux_amd64.zip
         dest: /usr/local/bin/
         remote_src: yes
-        extra_opts: [ '-j' ]
       when: ansible_os_family == 'RedHat'
+      args:
+        creates: /usr/local/bin/terraform
 
     - name: Ensure terraform is executable (Amazon Linux)
       ansible.builtin.file:

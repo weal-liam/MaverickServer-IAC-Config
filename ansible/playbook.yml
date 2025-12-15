@@ -2,18 +2,33 @@
   hosts: web
   become: true
   tasks:
-    - name: Update apt cache
+    # Debian/Ubuntu section
+    - name: Update apt cache (Debian/Ubuntu)
       ansible.builtin.apt:
         update_cache: yes
       when: ansible_os_family == 'Debian'
 
-    - name: Install Docker and dependencies
+    - name: Install Docker and dependencies (Debian/Ubuntu)
       ansible.builtin.apt:
         name:
           - docker.io
           - python3-docker
         state: present
       when: ansible_os_family == 'Debian'
+
+    # Amazon Linux section
+    - name: Install Docker and dependencies (Amazon Linux)
+      ansible.builtin.yum:
+        name:
+          - docker
+          - python3-pip
+        state: present
+      when: ansible_os_family == 'RedHat'
+
+    - name: Install Docker SDK for Python (Amazon Linux)
+      ansible.builtin.pip:
+        name: docker
+      when: ansible_os_family == 'RedHat'
 
     - name: Start Docker service
       ansible.builtin.service:
