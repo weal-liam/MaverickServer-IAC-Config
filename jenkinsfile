@@ -74,8 +74,8 @@ pipeline {
 ${instance_ip} ansible_user=ubuntu
 """
                   sh '''
-export ANSIBLE_HOST_KEY_CHECKING=False
-ansible-playbook -i inventory.ini playbook_initial.yml
+                    export ANSIBLE_HOST_KEY_CHECKING=False
+                    ansible-playbook -i inventory.ini playbook_initial.yml
                   '''
                 }
               }
