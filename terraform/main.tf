@@ -166,18 +166,12 @@ resource "aws_lb_listener" "weal_listener" {
 }
 */
 
-//key_pair
-resource "aws_key_pair" "maverick_key" {
-  key_name   = "maverick_key"
-  public_key = file("~/.ssh/maverick_key.pub")
-}
-
 //aws instance
 resource "aws_instance" "maverick_server" {
   ami           = data.aws_ami.maverick_server_ami.id
   instance_type = "t3.micro"
   subnet_id     = aws_subnet.weal_public_subnet.id
-  key_name      = aws_key_pair.maverick_key.key_name
+  key_name      = "weal_key_pair"
   vpc_security_group_ids = [aws_security_group.weal_sg.id]
 
   tags = {
