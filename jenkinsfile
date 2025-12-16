@@ -73,7 +73,7 @@ pipeline {
 [web]
 ${instance_ip} ansible_user=ubuntu
 """
-                  sh 'ansible -i inventory.ini servers -m ping --ssh-extra-args="-o StrictHostKeyChecking=accept-new"'
+                  sh 'ansible -i inventory servers -m ping --ssh-extra-args="-o StrictHostKeyChecking=accept-new"'
                   sh 'ansible-playbook -i inventory.ini playbook_initial.yml'
                 }
               }
