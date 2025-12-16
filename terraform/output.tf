@@ -2,7 +2,7 @@ output "maverick_server_public_ip" {
   value = aws_instance.maverick_server.public_ip
 }
 
-output "kubeconfig" {
+/*output "kubeconfig" {
   value = aws_eks_cluster.weal_eks_cluster.endpoint
 }
 
@@ -17,3 +17,4 @@ output "cluster_token" {
 output "alb_dns_name" {
   value = aws_lb.weal_lb.dns_name
 }
+*/
