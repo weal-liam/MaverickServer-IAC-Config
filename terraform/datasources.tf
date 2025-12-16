@@ -1,3 +1,4 @@
+# Amazon Machine Image
 data "aws_ami" "maverick_server_ami" {
   most_recent = true
 
@@ -8,7 +9,9 @@ data "aws_ami" "maverick_server_ami" {
     values = ["ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-*"]
   }
 }
-data "aws_iam_policy_document" "eks_assume_role_policy" {
+
+# kubernetes config
+/*data "aws_iam_policy_document" "eks_assume_role_policy" {
   statement {
     actions = ["sts:AssumeRole"]
     principals {
@@ -27,7 +30,7 @@ data "aws_iam_policy_document" "eks_node_assume_role_policy" {
     }
   }
 }
-
+*/
 
 
 

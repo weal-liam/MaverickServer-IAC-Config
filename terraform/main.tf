@@ -1,3 +1,4 @@
+// create a virtual private cloud
 resource "aws_vpc" "weal_vpc" {
   cidr_block           = "10.0.0.0/16"
   enable_dns_hostnames = true
@@ -8,7 +9,7 @@ resource "aws_vpc" "weal_vpc" {
   }
 }
 
-resource "aws_eks_cluster" "weal_eks_cluster" {
+/*resource "aws_eks_cluster" "weal_eks_cluster" {
   name     = "weal-eks-cluster"
   role_arn = aws_iam_role.eks_cluster_role.arn
 
@@ -24,7 +25,8 @@ resource "aws_eks_cluster" "weal_eks_cluster" {
   }
   
 }
-
+*/
+// create a subnet
 resource "aws_subnet" "weal_public_subnet" {
   vpc_id                  = aws_vpc.weal_vpc.id
   cidr_block              = "10.0.1.0/24"
@@ -36,6 +38,7 @@ resource "aws_subnet" "weal_public_subnet" {
   }
 }
 
+//another subnet
 resource "aws_subnet" "weal_public_subnet_b" {
   vpc_id                  = aws_vpc.weal_vpc.id
   cidr_block              = "10.0.2.0/24"
@@ -47,6 +50,7 @@ resource "aws_subnet" "weal_public_subnet_b" {
   }
 }
 
+// then an internet gateway
 resource "aws_internet_gateway" "weal_igw" {
   vpc_id = aws_vpc.weal_vpc.id
 
@@ -54,6 +58,8 @@ resource "aws_internet_gateway" "weal_igw" {
     Name = "dev-igw"
   }
 }
+
+// a route table
 resource "aws_route_table" "weal_public_route_table" {
   vpc_id = aws_vpc.weal_vpc.id
 
@@ -62,16 +68,20 @@ resource "aws_route_table" "weal_public_route_table" {
     gateway_id = aws_internet_gateway.weal_igw.id
   }
 }
+
+// a route table association with the subnet
 resource "aws_route_table_association" "weal_public_route_table_association" {
   subnet_id      = aws_subnet.weal_public_subnet.id
   route_table_id = aws_route_table.weal_public_route_table.id
 }
 
+// another route table association
 resource "aws_route_table_association" "weal_public_route_table_association_b" {
   subnet_id      = aws_subnet.weal_public_subnet_b.id
   route_table_id = aws_route_table.weal_public_route_table.id
 }
 
+// security group
 resource "aws_security_group" "weal_sg" {
   vpc_id = aws_vpc.weal_vpc.id
 
@@ -94,6 +104,8 @@ resource "aws_security_group" "weal_sg" {
   }
 }
 
+// load balancer instead of NGNIX
+/*
 resource "aws_lb" "weal_lb" {
   name               = "weal-lb"
   internal           = false
@@ -107,7 +119,10 @@ resource "aws_lb" "weal_lb" {
     Name = "weal-lb"
   }
 }
+ */
 
+// target group
+/*
 resource "aws_lb_target_group" "weal_target_group" {
   name     = "weal-target-group"
   port     = 10000
@@ -130,11 +145,14 @@ resource "aws_lb_target_group" "weal_target_group" {
   
 }
 
+//target group attachment
 resource "aws_lb_target_group_attachment" "weal_target_group_attachment" {
   target_group_arn = aws_lb_target_group.weal_target_group.arn
   target_id        = aws_instance.maverick_server.id
   port             = 10000
 }
+
+// load balancer listener
 
 resource "aws_lb_listener" "weal_listener" {
   load_balancer_arn = aws_lb.weal_lb.arn
@@ -146,13 +164,15 @@ resource "aws_lb_listener" "weal_listener" {
     target_group_arn = aws_lb_target_group.weal_target_group.arn
   }
 }
+*/
 
+//key_pair
 resource "aws_key_pair" "maverick_key" {
   key_name   = "maverick_key"
   public_key = file("~/.ssh/maverick_key.pub")
 }
 
-
+//aws instance
 resource "aws_instance" "maverick_server" {
   ami           = data.aws_ami.maverick_server_ami.id
   instance_type = "t3.micro"
@@ -169,8 +189,17 @@ resource "aws_instance" "maverick_server" {
   }
 }
 
+//elastic IP
+resource "aws_eip" "weal_eip" {
+  instance = aws_instance.maverick_server.id
+  domain = "vpc"
+  tags = {
+    Name = "weal-eip"
+  }
+}
 
-
+//kubernetes config
+/*
 resource "aws_iam_role" "eks_cluster_role" {
   name = "eksClusterRole"
   assume_role_policy = data.aws_iam_policy_document.eks_assume_role_policy.json
@@ -220,3 +249,4 @@ resource "aws_eks_node_group" "weal_node_group" {
     aws_iam_role_policy_attachment.eks_node_AmazonEC2ContainerRegistryReadOnly
   ]
 }
+ */

@@ -1,5 +1,5 @@
 pipeline {
-  agent { label 'MAV_server' }
+  agent { label 'MaverickServer' }
 
   environment {
 	AWS_CREDS_ID = "${env.AWS_CREDENTIALS_ID}"
@@ -80,7 +80,7 @@ ${instance_ip} ansible_user=ubuntu
           }
         }
 
-    stage('Configure kubectl') {
+/*    stage('Configure kubectl') {
       steps {
         script {
           def output = readJSON file: 'kube-output.json'
@@ -118,7 +118,7 @@ users:
         }
       }
     }
-
+*/
     stage('Build Docker Image') {
       steps {
         dir('app') {
@@ -160,7 +160,7 @@ ${instance_ip} ansible_user=ubuntu
       }
     }
 
-    stage('Deploy to EKS') {
+/*    stage('Deploy to EKS') {
       steps {
         sh '''
           set -e
@@ -180,7 +180,7 @@ ${instance_ip} ansible_user=ubuntu
         '''
       }
     }
-
+*/
     stage('Cleanup Docker') {
       steps {
         script {
@@ -203,7 +203,7 @@ ${instance_ip} ansible_user=ubuntu
       steps {
         script {
           echo "Removing temporary files..."
-          sh 'rm -f kubeconfig.yml || true'
+          //sh 'rm -f kubeconfig.yml || true'
           sh 'rm -f kube-output.json || true'
         }
       }
@@ -213,7 +213,7 @@ ${instance_ip} ansible_user=ubuntu
 
   post {
     success {
-      echo "Deployment to EKS successful!"
+      echo "Deployment successful!"
     }
     failure {
       echo "Pipeline failed. Check logs for details."
