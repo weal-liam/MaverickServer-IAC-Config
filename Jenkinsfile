@@ -19,7 +19,7 @@ pipeline {
             $class: 'GitSCM',
             branches: [[name: '*/master']],
             userRemoteConfigs: [[
-              url: 'https://github.com/weal-liam/aws-hosting-project.git',
+              url: 'https://github.com/weal-liam/ecommerce-site-frontend.git',
               credentialsId: "${GITHUB_CREDS}"
             ]]
           ])
@@ -29,7 +29,7 @@ pipeline {
             $class: 'GitSCM',
             branches: [[name: '*/main']],
             userRemoteConfigs: [[
-              url: 'https://github.com/weal-liam/ecommerce-site-frontend.git',
+              url: 'https://github.com/weal-liam/MaverickServer-IAC-Config.git',
               credentialsId: "${GITHUB_CREDS}"
             ]]
           ])
