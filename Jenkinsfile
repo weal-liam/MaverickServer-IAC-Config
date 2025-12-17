@@ -125,7 +125,7 @@ users:
     stage('Build Docker Image') {
       steps {
         dir('app') {
-          sh 'sudo docker build -t mav-app:latest .'
+          sh 'docker build -t mav-app:latest .'
         }
       }
     }
