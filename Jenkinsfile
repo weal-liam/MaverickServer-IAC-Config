@@ -29,7 +29,7 @@ pipeline {
             $class: 'GitSCM',
             branches: [[name: '*/main']],
             userRemoteConfigs: [[
-              url: 'https://github.com/weal-liam/MaverickServer-IAC-Config.git',
+              url: 'https://github.com/weal-liam/ecommerce-site-frontend.git',
               credentialsId: "${GITHUB_CREDS}"
             ]]
           ])
