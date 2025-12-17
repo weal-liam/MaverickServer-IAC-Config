@@ -125,6 +125,7 @@ users:
     stage('Build Docker Image') {
       steps {
         dir('app') {
+          sh 'sudo usermod -aG docker jenkins'
           sh 'docker build -t mav-app:latest .'
         }
       }
