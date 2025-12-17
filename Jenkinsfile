@@ -17,7 +17,7 @@ pipeline {
         dir('app') {
           checkout([
             $class: 'GitSCM',
-            branches: [[name: '*/master']],
+            branches: [[name: '*/main']],
             userRemoteConfigs: [[
               url: 'https://github.com/weal-liam/ecommerce-site-frontend.git',
               credentialsId: "${GITHUB_CREDS}"
