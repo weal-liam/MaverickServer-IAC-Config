@@ -7,7 +7,7 @@ pipeline {
     PRIVATE_KEY_ID = "${env.PRIVATE_KEY_ID}"
     DOCKER_IMAGE = 'wealliam/maverick-reg'
     HOST_PORT = '80'
-    CONTAINER_PORT = '3000'
+    CONTAINER_PORT = '10000'
   }
 
   stages {
