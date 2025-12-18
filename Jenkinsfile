@@ -7,7 +7,7 @@ pipeline {
     PRIVATE_KEY_ID = "${env.PRIVATE_KEY_ID}"
     DOCKER_IMAGE = 'wealliam/maverick-reg'
     HOST_PORT = '80'
-    CONTAINER_PORT = '10000'
+    CONTAINER_PORT = '3000'
   }
 
   stages {
@@ -125,7 +125,7 @@ users:
     stage('Build Docker Image') {
       steps {
         dir('app') {
-          sh 'docker build -t mav-app:latest .'
+          sh 'docker build --no-cache -t mav-app:latest .'
         }
       }
     }
