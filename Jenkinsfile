@@ -7,7 +7,7 @@ pipeline {
     PRIVATE_KEY_ID = "${env.PRIVATE_KEY_ID}"
     DOCKER_IMAGE = 'wealliam/maverick-reg'
     HOST_PORT = '80'
-    CONTAINER_PORT = '3000'
+    CONTAINER_PORT = '10000'
   }
 
   stages {
@@ -19,7 +19,7 @@ pipeline {
             $class: 'GitSCM',
             branches: [[name: '*/main']],
             userRemoteConfigs: [[
-              url: 'https://github.com/weal-liam/ecommerce-site-frontend.git',
+              url: 'https://github.com/weal-liam/aws-hosting-project.git',
               credentialsId: "${GITHUB_CREDS}"
             ]]
           ])
